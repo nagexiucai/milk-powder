@@ -42,7 +42,52 @@
 
 	![](./pictures/初始OCR结果.png "初始OCR结果")
 
-	显然很差！
+	显然很差！看来必须训练专用的中文字库。
+
+- 用画图板（mspaint）把图片另存为TIF格式
+
+	TIF文件名：[lang].[font].exp[number].tif
+	lang是语言、font是字体、number是测试排次，可自定义。
+
+	经比对“美素佳儿-金装-婴幼儿-三段”中所用字体为“华文细黑10号（简体汉字）”和“Arial9号（英文字母、阿拉伯数字、希腊字母）”，因此，TIF文件名应为“friso-bb3-cn-zh-s.normal.exp0.tif”。字体“华文细黑”的通用索引名称是“STXIHEI”；**暂时用“normal”——用“STXIHEI”报错**：
+
+		Warning: No shape table file present: shapetable
+		Reading .\pictures\friso-bb3-cn-zh-s.STXIHEI.exp0.tr ...
+		Font id = -1/0, class id = 2/135 on sample 0
+		font_id >= 0 && font_id < font_id_map_.SparseSize():Error:Assert failed:in file ..\..\classify\trainingsampleset.cpp, line 622
+
+	原因后边剖析。
+
+- 生成box文件
+
+	tesseract .\pictures\friso-bb3-cn-zh-s.normal.exp0.jpg .\pictures\friso-bb3-cn-zh-s.normal.exp0 -l chi_sim batch.nochop makebox
+
+	其实，这个box文件就是把所识别出的字符（且不论对错）和在图像中对应的位置列出来。
+
+- 矫正错误
+
+	启动jTessBoxEditor（双击目录下的train.bat）；
+	打开friso-bb3-cn-zh-s.normal.exp0.tif做校订；
+	把“美素佳儿-金装-婴幼儿-三段”的表名和列标题这部分更改完，以快速熟悉流程、体验效果。
+
+- 训练样本
+
+	tesseract .\pictures\friso-bb3-cn-zh-s.normal.exp0.jpg .\pictures\friso-bb3-cn-zh-s.normal.exp0 nobatch box.train
+
+	![](./pictures/初次修正后BOX检查结果.png)
+
+	表示修正过的仍有“2”个没能识别出来，且放着。
+
+	unicharset_extractor .\pictures\friso-bb3-cn-zh-s.normal.exp0.box
+
+	![](./pictures/初次修正后UNICODE字符集抽取结果.png)
+
+	新建“font_properties”文件（必须无BOM）：
+
+		normal 0 0 0 0 0
+
+	这样的内容表示普通字体。
+
 
 # 引用 #
 [0]: http://www.softpedia.com/get/Programming/Other-Programming-Files/Tesseract-OCR.shtml "Tesseract-OCR-Windows"
