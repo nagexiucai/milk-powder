@@ -25,15 +25,15 @@
 ### 利用Tesseract-OCR提取图像中营养配方 ###
 
 #### 环境准备 ####
-这里仅给出本案目前采用的“OCR Engine v3.02 with Leptonica”配置。
+这里给出“OCR Engine v3.02 with Leptonica”配置。
 
 - Tesseract-OCR-Windows [OCR Engine v3.02 with Leptonica][0] [Others][1]
-- 简体中文字库 [For-3.0.2-With-Leptonica:key=**ngxc**][2]
+- 简体中文字库 [For-Tesseract-OCR-3.0.2][2]
 - [jTessBoxEditor][3]
 
 确保tesseract.exe添加到环境PATH变量；确保中文字库放置在Tesseract-OCR\tessdata目录下。
 
-#### 详细步骤 ####
+#### [详细步骤][7] ####
 - 执行
 
 	tesseract .\pictures\美素佳儿-金装-婴幼儿-三段.jpg .\texts\friso-gold-baby-3.txt -l chi_sim
@@ -75,16 +75,26 @@
 
 	![](./pictures/初次修正后UNICODE字符集抽取结果.png)
 
-	新建“font_properties”文件（必须无BOM）：
+	新建“[font_properties][5]”文件（[必须无BOM且换行为UNIX风格][6]）：
 
-		normal 0 0 0 0 0
+		CHei_PRC 0 0 0 0 0
 
-	这样的内容表示普通字体。
+	shapeclustering -F .\font_properties -U .\unicharset .\pictures\chi_sim.CHei_PRC.exp0.tr
 
+	擦~烦人的报错！
+
+		Reading .\pictures\chi_sim.CHei_PRC.exp0.tr ...
+		Font id = -1/0, class id = 2/132 on sample 0
+		font_id >= 0 && font_id < font_id_map_.SparseSize():Error:Assert failed:in file ..\..\classify\trainingsampleset.cpp, line 622
+
+**百度和谷歌都没能找到可用的解决方法。**
 
 # 引用 #
 [0]: http://www.softpedia.com/get/Programming/Other-Programming-Files/Tesseract-OCR.shtml "Tesseract-OCR-Windows"
 [1]: https://digi.bib.uni-mannheim.de/tesseract/ "Tesseract-OCR-Windows"
-[2]: https://share.weiyun.com/544c932ede4498480cca2f2923884a99 "For-3.0.2-With-Leptonica"
+[2]: https://sourceforge.net/projects/tesseract-ocr-alt/files/tesseract-ocr-3.02.chi_sim.tar.gz "For-Tesseract-OCR-3.0.2"
 [3]: http://www.softpedia.com/get/Multimedia/Graphic/Graphic-Others/jTessBoxEditor.shtml "jTessBoxEditor"
 [4]: https://raw.githubusercontent.com/tesseract-ocr/langdata/master/font_properties "Fonts Supported By Tesseract-OCR"
+[5]: https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract-3.00–3.02#font_properties-new-in-301 "font properties"
+[6]: https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract-3.00–3.02#requirements-for-text-input-files "font properties"
+[7]: https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract-3.00–3.02 "手册"
