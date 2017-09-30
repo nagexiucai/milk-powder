@@ -49,36 +49,29 @@
 	TIF文件名：[lang].[font].exp[number].tif
 	lang是语言、font是字体、number是测试排次，可自定义。
 
-	经比对“美素佳儿-金装-婴幼儿-三段”中所用字体为“华文细黑10号（简体汉字）”和“Arial9号（英文字母、阿拉伯数字、希腊字母）”，因此，TIF文件名应为“friso-bb3-cn-zh-s.normal.exp0.tif”。字体“华文细黑”的通用索引名称是“STXIHEI”；**暂时用“normal”——用“STXIHEI”报错**：
-
-		Warning: No shape table file present: shapetable
-		Reading .\pictures\friso-bb3-cn-zh-s.STXIHEI.exp0.tr ...
-		Font id = -1/0, class id = 2/135 on sample 0
-		font_id >= 0 && font_id < font_id_map_.SparseSize():Error:Assert failed:in file ..\..\classify\trainingsampleset.cpp, line 622
-
-	原因后边剖析。
+	经比对“美素佳儿-金装-婴幼儿-三段”中所用字体为“华文细黑10号（简体汉字）”和“Arial9号（英文字母、阿拉伯数字、希腊字母）”；然而Tesseract-OCR并不支持“STXIHEI（即华文细黑）”[字体][4]，只能找近似字体替代，暂时用“CHei_PRC”。因此，TIF文件名应为“chi_sim.CHei_PRC.exp0.tif”。
 
 - 生成box文件
 
-	tesseract .\pictures\friso-bb3-cn-zh-s.normal.exp0.jpg .\pictures\friso-bb3-cn-zh-s.normal.exp0 -l chi_sim batch.nochop makebox
+	tesseract .\pictures\chi_sim.CHei_PRC.exp0.jpg .\pictures\chi_sim.CHei_PRC.exp0 -l chi_sim batch.nochop makebox
 
 	其实，这个box文件就是把所识别出的字符（且不论对错）和在图像中对应的位置列出来。
 
 - 矫正错误
 
 	启动jTessBoxEditor（双击目录下的train.bat）；
-	打开friso-bb3-cn-zh-s.normal.exp0.tif做校订；
+	打开chi_sim.CHei_PRC.exp0.tif做校订；
 	把“美素佳儿-金装-婴幼儿-三段”的表名和列标题这部分更改完，以快速熟悉流程、体验效果。
 
 - 训练样本
 
-	tesseract .\pictures\friso-bb3-cn-zh-s.normal.exp0.jpg .\pictures\friso-bb3-cn-zh-s.normal.exp0 nobatch box.train
+	tesseract .\pictures\chi_sim.CHei_PRC.exp0.jpg .\pictures\chi_sim.CHei_PRC.exp0 nobatch box.train
 
 	![](./pictures/初次修正后BOX检查结果.png)
 
 	表示修正过的仍有“2”个没能识别出来，且放着。
 
-	unicharset_extractor .\pictures\friso-bb3-cn-zh-s.normal.exp0.box
+	unicharset_extractor .\pictures\chi_sim.CHei_PRC.exp0.box
 
 	![](./pictures/初次修正后UNICODE字符集抽取结果.png)
 
@@ -94,3 +87,4 @@
 [1]: https://digi.bib.uni-mannheim.de/tesseract/ "Tesseract-OCR-Windows"
 [2]: https://share.weiyun.com/544c932ede4498480cca2f2923884a99 "For-3.0.2-With-Leptonica"
 [3]: http://www.softpedia.com/get/Multimedia/Graphic/Graphic-Others/jTessBoxEditor.shtml "jTessBoxEditor"
+[4]: https://raw.githubusercontent.com/tesseract-ocr/langdata/master/font_properties "Fonts Supported By Tesseract-OCR"
