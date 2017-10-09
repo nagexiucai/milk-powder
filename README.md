@@ -29,11 +29,13 @@
 
 - Tesseract-OCR-Windows [OCR Engine v3.02 with Leptonica][0] [Others][1]
 - 简体中文字库 [For-Tesseract-OCR-3.0.2][2]
-- [jTessBoxEditor][3]
+- [jTessBoxEditor][3] [手册][8] [中文版][9]
 
 确保tesseract.exe添加到环境PATH变量；确保中文字库放置在Tesseract-OCR\tessdata目录下。
 
 #### [详细步骤][7] ####
+**绕过啰嗦**[点这里](#goto-success-test)。
+
 - 执行
 
 	tesseract .\pictures\美素佳儿-金装-婴幼儿-三段.jpg .\texts\friso-gold-baby-3.txt -l chi_sim
@@ -49,23 +51,23 @@
 	TIF文件名：[lang].[font].exp[number].tif
 	lang是语言、font是字体、number是测试排次，可自定义。
 
-	经比对“美素佳儿-金装-婴幼儿-三段”中所用字体为“华文细黑10号（简体汉字）”和“Arial9号（英文字母、阿拉伯数字、希腊字母）”；然而Tesseract-OCR并不支持“STXIHEI（即华文细黑）”[字体][4]，只能找近似字体替代，暂时用“CHei_PRC”。因此，TIF文件名应为“chi_sim.CHei_PRC.exp0.tif”。
+	经比对“美素佳儿-金装-婴幼儿-三段”中所用字体为“华文细黑10号（简体汉字）”和“Arial9号（英文字母、阿拉伯数字、希腊字母）”；然而Tesseract-OCR并不支持“STXIHEI（即华文细黑）”[字体][4]，只能找近似字体替代，暂时用“CHei_PRC”。因此，TIF文件名应为“chi\_sim.CHei\_PRC.exp0.tif”。
 
 - 生成box文件
 
-	tesseract .\pictures\chi_sim.CHei_PRC.exp0.jpg .\pictures\chi_sim.CHei_PRC.exp0 -l chi_sim batch.nochop makebox
+	tesseract .\pictures\chi\_sim.CHei\_PRC.exp0.jpg .\pictures\chi\_sim.CHei\_PRC.exp0 -l chi\_sim batch.nochop makebox
 
 	其实，这个box文件就是把所识别出的字符（且不论对错）和在图像中对应的位置列出来。
 
 - 矫正错误
 
 	启动jTessBoxEditor（双击目录下的train.bat）；
-	打开chi_sim.CHei_PRC.exp0.tif做校订；
+	打开chi\_sim.CHei\_PRC.exp0.tif做校订；
 	把“美素佳儿-金装-婴幼儿-三段”的表名和列标题这部分更改完，以快速熟悉流程、体验效果。
 
 - 训练样本
 
-	tesseract .\pictures\chi_sim.CHei_PRC.exp0.jpg .\pictures\chi_sim.CHei_PRC.exp0 nobatch box.train
+	tesseract .\pictures\chi\_sim.CHei\_PRC.exp0.jpg .\pictures\chi\_sim.CHei\_PRC.exp0 nobatch box.train
 
 	![](./pictures/初次修正后BOX检查结果.png)
 
@@ -79,7 +81,7 @@
 
 		CHei_PRC 0 0 0 0 0
 
-	shapeclustering -F .\font_properties -U .\unicharset .\pictures\chi_sim.CHei_PRC.exp0.tr
+	shapeclustering -F .\font\_properties -U .\unicharset .\pictures\chi\_sim.CHei_PRC.exp0.tr
 
 	擦~烦人的报错！
 
@@ -88,6 +90,14 @@
 		font_id >= 0 && font_id < font_id_map_.SparseSize():Error:Assert failed:in file ..\..\classify\trainingsampleset.cpp, line 622
 
 **百度和谷歌都没能找到可用的解决方法。**
+
+*直接[更新tesseract-ocr版本](https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-setup-4.00.00dev.exe "Tesseract-OCRv4-Windows64")*试试。
+
+- 安装时选择下载中文简体和数学公式字库
+
+问题解决！可见**上边出现的情况是v3.0.2的一个Bug！**
+
+[跑通的批处理](id:goto-success-test)。
 
 # 引用 #
 [0]: http://www.softpedia.com/get/Programming/Other-Programming-Files/Tesseract-OCR.shtml "Tesseract-OCR-Windows"
@@ -98,3 +108,5 @@
 [5]: https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract-3.00–3.02#font_properties-new-in-301 "font properties"
 [6]: https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract-3.00–3.02#requirements-for-text-input-files "font properties"
 [7]: https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract-3.00–3.02 "手册"
+[8]: http://vietocr.sourceforge.net/training.html "jTessBoxEditor-training"
+[9]: ./jTessBoxEditor训练手册中文版.md

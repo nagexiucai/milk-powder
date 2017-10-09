@@ -1,0 +1,43 @@
+@echo "start training ..."
+
+@set LANG=chi_sim
+@set EXPN=exp0
+
+@echo "TOCRv3.05"
+@set TOCR=C:\Tesseract-OCR\jTessBoxEditor\tesseract-ocr
+
+:PROCESS
+
+%TOCR%\tesseract --version
+
+%TOCR%\tesseract .\pictures\%LANG%.CHei_PRC.%EXPN%.jpg .\pictures\%LANG%.CHei_PRC.%EXPN% -l %LANG% batch.nochop makebox
+
+@echo "waiting for revision ..."
+
+%TOCR%\tesseract .\pictures\%LANG%.CHei_PRC.%EXPN%.jpg .\pictures\%LANG%.CHei_PRC.%EXPN% nobatch box.train
+
+%TOCR%\unicharset_extractor .\pictures\%LANG%.CHei_PRC.%EXPN%.box
+
+@echo "breaked here by exception!!"
+
+%TOCR%\shapeclustering -F .\font_properties -U .\unicharset .\pictures\%LANG%.CHei_PRC.%EXPN%.tr
+
+%TOCR%\mftraining -F .\font_properties -U unicharset -O %LANG%.unicharset .\pictures\%LANG%.CHei_PRC.%EXPN%.tr
+
+%TOCR%\cntraining .\pictures\%LANG%.CHei_PRC.%EXPN%.tr
+
+@echo "end training !"
+
+pause
+
+if defined ENOUGH (
+@goto END
+) else (
+@echo "TOCRv4"
+@set TOCR="C:\Program Files (x86)\Tesseract-OCR"
+@set ENOUGH="enough"
+@goto PROCESS
+)
+
+@echo "over !!"
+:END
