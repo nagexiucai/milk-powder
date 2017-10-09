@@ -4,7 +4,9 @@
 @set FONT=CHei_PRC
 @set HOME=.
 
-%TOCR%\tesseract %HOME%\%LANG%.%FONT%.jpg %HOME%\%LANG%.%FONT% -l %ORIG% batch.nochop makebox
+@echo "just makebox once!!"
+@rem %TOCR%\tesseract %HOME%\%LANG%.%FONT%.jpg %HOME%\%LANG%.%FONT% -l %ORIG% batch.nochop makebox
+
 %TOCR%\tesseract %HOME%\%LANG%.%FONT%.jpg %HOME%\%LANG%.%FONT% nobatch box.train
 %TOCR%\unicharset_extractor %HOME%\%LANG%.%FONT%.box
 %TOCR%\shapeclustering -F %HOME%\%LANG%.font_properties -U %HOME%\unicharset %HOME%\%LANG%.%FONT%.tr
